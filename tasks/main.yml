@@ -1,0 +1,20 @@
+    - name: Add Oracle Java repository
+      apt_repository: repo='ppa:webupd8team/java' state=present
+      tags:
+      - oracle-java
+      - run
+      become: yes
+
+    - name: Automatically select the Oracle License
+      debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+      tags:
+      - oracle-java
+      - run
+      become: yes
+
+    - name: Install Orcale Java
+      apt: name=oracle-java8-installer state=present
+      tags:
+      - oracle-java
+      - run
+      become: yes

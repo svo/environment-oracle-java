@@ -6,14 +6,32 @@
       become: yes
 
     - name: Automatically select the Oracle License
-      debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+      debconf: name='oracle-java7-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
       tags:
       - oracle-java
       - run
       become: yes
 
+    - name: Create oracle java cache directories
+      file: dest=/var/cache/{{ item }} state=directory
+      become: yes
+      with_items:
+      - oracle-jdk7-installer
+      tags:
+      - oracle-java
+      - run
+
+    - name: Copy .tar.gz files for oracle java
+      get_url: url={{ item.url }} dest=/var/cache/{{ item.cache_directory }}/{{ item.archive }}
+      become: yes
+      with_items:
+      - { url: "https://www.dropbox.com/s/jq0b2wugzx1n494/jdk-7u80-linux-x64.tar.gz?dl=1", archive: "jdk-7u80-linux-x64.tar.gz", cache_directory: oracle-jdk7-installer }
+      tags:
+      - oracle-java
+      - run
+
     - name: Install Orcale Java
-      apt: name=oracle-java8-installer state=present
+      apt: name=oracle-java7-installer state=present
       tags:
       - oracle-java
       - run
